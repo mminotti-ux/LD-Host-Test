@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<!-- Test copy of MAIB Mod 1 Week 5 "Reading Logistic Regression" for GitHub Pages + Google Sites.
+     Only change from the Blackboard version: the two learn.bu.edu logo images are replaced with text. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Reading Logistic Regression — Mod 1 · Week 5 | MS in AI in Business</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,700&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+/*
+ * ═══════════════════════════════════════════════════════════
+ * SHARED READING SHELL
+ * ═══════════════════════════════════════════════════════════
+ */
+:root {
+  --red: #CC0000;
+  --cherry: #A71930;
+  --teal: #63C4AF;
+  --teal-dark: #2d8f7a;
+  /* --teal-dark is 3.95:1 on --card, which clears the 3:1 required of borders and
+     fills but not the 4.5:1 required of text. --teal-text is the text-safe variant. */
+  --teal-text: #27796a;
+  --blue: #005293;
+  --ink: #13110f;
+  --ink-2: #3a3330;
+  --muted: #6b6360;
+  --faint: #9e9895;
+  --line: rgba(20,17,15,.09);
+  --line-med: rgba(20,17,15,.14);
+  --bg: #f9f8f7;
+  --card: #ffffff;
+  --max-shell: 860px;
+  --max-read:  680px;
+  --fb: "Barlow",Arial,sans-serif;
+  --fd: "Barlow Condensed",Arial,sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--fb); background: var(--bg); color: var(--ink); line-height: 1.65; -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; border-radius: 4px; }
+.skip-link {
+  position: absolute; left: 16px; top: -60px;
+  background: var(--blue); color: #fff; padding: 10px 14px;
+  border-radius: 0 0 8px 8px; z-index: 999; font-weight: 600; font-size: .88rem;
+}
+.skip-link:focus { top: 0; }
+
+/* ── BRAND BAR ── */
+.maib-logo-img { height: 80px; width: auto; flex-shrink: 0; }
+/* ── READING PROGRESS ── */
+.progress-wrap {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(255,255,255,.9); backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+}
+.progress-bar { height: 4px; background: linear-gradient(90deg, #CC0000 0%, var(--cherry) 55%, var(--teal) 100%); width: 0%; transition: width .1s; }
+
+/* ── ARTICLE SHELL ── */
+.article-shell {
+  max-width: var(--max-shell); margin: 0 auto;
+  padding: 52px 32px 80px;
+}
+
+/* ── ARTICLE HEADER ── */
+.article-header { max-width: var(--max-read); margin: 0 auto 48px; }
+.article-title {
+  font-family: var(--fd);
+  font-size: clamp(2rem, 5vw, 3rem);
+  line-height: 1.06; letter-spacing: -.01em; margin-bottom: 18px;
+}
+.article-title em { font-style: italic; color: var(--cherry); }
+.article-lead {
+  font-size: 1.1rem; color: var(--muted); line-height: 1.75;
+  max-width: 60ch; padding-bottom: 24px;
+  border-bottom: 1px solid var(--line-med);
+}
+
+/* ── ARTICLE BODY ── */
+.article-body {
+  max-width: var(--max-read); margin: 0 auto;
+  font-size: 1.02rem; line-height: 1.82; color: var(--muted);
+}
+.article-body h2 {
+  font-family: var(--fd); font-size: clamp(1.4rem, 2.5vw, 1.85rem);
+  line-height: 1.15; letter-spacing: -.01em;
+  color: var(--ink); margin: 44px 0 14px;
+  padding-bottom: 10px; border-bottom: 1px solid var(--line-med);
+}
+.article-body h3 {
+  font-size: 1.08rem; font-weight: 600; color: var(--ink-2);
+  margin: 28px 0 8px; letter-spacing: -.01em;
+}
+.article-body p { margin-bottom: 20px; }
+.article-body p:last-child { margin-bottom: 0; }
+.article-body strong { color: var(--ink); font-weight: 600; }
+.article-body em { font-style: italic; }
+
+/* Vocab tooltips */
+.vocab-term {
+  background: rgba(99,196,175,.12); color: var(--teal-text);
+  padding: 1px 5px; border-radius: 4px; font-weight: 600;
+  border: none; font: inherit; line-height: inherit;
+  cursor: pointer; -webkit-appearance: none; appearance: none;
+  text-decoration: underline; text-decoration-style: dotted;
+  text-underline-offset: 3px; text-decoration-thickness: 2px;
+}
+.vocab-term:hover { background: rgba(99,196,175,.18); }
+.vocab-term:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.vocab-term[aria-expanded="true"] { background: rgba(99,196,175,.20); text-decoration-style: solid; }
+.vocab-sr {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+.vocab-definition {
+  display: block; margin: 10px 0 16px; padding: 12px 16px;
+  background: var(--card, #fff); border: 1px solid var(--line-med, rgba(0,0,0,.14));
+  border-left: 3px solid var(--teal-dark); border-radius: 0 10px 10px 0;
+  font-size: .92rem; line-height: 1.55; color: var(--ink-2, #333);
+  max-width: 62ch; font-family: var(--fb, inherit);
+}
+.vocab-definition[hidden] { display: none; }
+
+/* Callout / aside */
+.callout {
+  margin: 28px 0; padding: 18px 20px 18px 22px;
+  background: var(--card); border: 1px solid var(--line-med);
+  border-left: 3px solid var(--teal-dark); border-radius: 0 12px 12px 0;
+}
+.callout-label { font-size: .67rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--teal-dark); margin-bottom: 7px; }
+.callout p { font-size: .93rem; margin-bottom: 0; }
+
+/* Pull quote */
+.pull-quote {
+  margin: 36px 0; padding: 24px 24px 20px; text-align: center;
+  border-top: 2px solid var(--cherry); border-bottom: 2px solid var(--cherry);
+}
+.pull-quote p { font-family: var(--fd); font-size: 1.3rem; font-style: italic; color: var(--ink); margin: 0; line-height: 1.4; }
+
+/* Deep dive accordion */
+.deep-dive {
+  margin: 28px 0; background: var(--card);
+  border: 1px solid var(--line-med); border-radius: 12px; overflow: hidden;
+}
+.deep-dive-trigger {
+  width: 100%; text-align: left; background: none; border: none; padding: 15px 18px;
+  cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  font-family: var(--fb);
+}
+.deep-dive-trigger:focus-visible { outline: 2px solid var(--blue); outline-offset: -2px; border-radius: 11px; }
+.deep-dive-trigger-left { display: flex; align-items: center; gap: 10px; }
+.deep-dive-icon {
+  width: 26px; height: 26px; border-radius: 7px; background: rgba(0,82,147,.08);
+  border: 1px solid rgba(0,82,147,.16); display: grid; place-items: center; flex-shrink: 0;
+}
+.deep-dive-icon svg { width: 12px; height: 12px; stroke: var(--blue); fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.deep-dive-label { font-size: .78rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--blue); }
+.deep-dive-title { font-size: .94rem; font-weight: 600; color: var(--ink); margin-top: 2px; }
+.deep-dive-chevron {
+  width: 24px; height: 24px; border-radius: 7px; border: 1px solid var(--line-med);
+  background: var(--bg); display: grid; place-items: center; color: var(--muted);
+  font-size: .72rem; transition: transform .25s, background .15s; flex-shrink: 0;
+}
+.deep-dive.open .deep-dive-chevron { transform: rotate(180deg); background: rgba(0,82,147,.07); border-color: rgba(0,82,147,.18); color: var(--blue); }
+.deep-dive-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .28s cubic-bezier(.4,0,.2,1); }
+.deep-dive.open .deep-dive-body { grid-template-rows: 1fr; }
+.deep-dive-inner { overflow: hidden; }
+.deep-dive-content {
+  padding: 16px 18px 18px; border-top: 1px solid var(--line);
+  font-size: .93rem; color: var(--muted); line-height: 1.75;
+}
+.deep-dive-content p + p { margin-top: 12px; }
+
+/* Section divider */
+.sec-divider {
+  display: flex; align-items: center; gap: 14px; margin: 44px 0 0;
+}
+.sec-divider-label { font-size: .67rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--teal-dark); white-space: nowrap; }
+.sec-divider-rule { flex: 1; height: 1px; background: var(--line-med); }
+
+/* ── DATA TABLES ── */
+.data-table-wrap {
+  margin: 28px 0; overflow-x: auto;
+  border-radius: 12px; border: 1px solid var(--line-med);
+}
+.data-table {
+  width: 100%; border-collapse: collapse; font-size: .91rem;
+  background: var(--card);
+}
+.data-table thead th {
+  background: rgba(167,25,48,.05); color: var(--ink);
+  font-weight: 600; font-size: .78rem; letter-spacing: .04em; text-transform: uppercase;
+  padding: 11px 16px; text-align: left; border-bottom: 1px solid var(--line-med);
+}
+.data-table tbody td {
+  padding: 11px 16px; color: var(--muted); vertical-align: top;
+  border-bottom: 1px solid var(--line);
+}
+.data-table tbody tr:last-child td { border-bottom: none; }
+.data-table tbody tr:nth-child(even) td { background: rgba(20,17,15,.015); }
+.data-table td strong { color: var(--ink); font-weight: 600; }
+.data-table caption {
+  caption-side: top; font-size: .76rem; font-weight: 600; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--teal-dark); text-align: left;
+  padding: 12px 16px 8px; border-bottom: 1px solid var(--line);
+}
+
+/*
+ * ═══════════════════════════════════════════════════════════
+ * IN-LINE INTERACTION — PROBABILITY CURVE EXPLORER
+ * ═══════════════════════════════════════════════════════════
+ */
+.sx {
+  width: calc(100% + 100px); margin: 34px 0 34px -50px;
+  background: var(--card); border: 1px solid var(--line-med);
+  border-radius: 16px; padding: 20px 20px 18px;
+}
+@media (max-width: 800px) { .sx { width: 100%; margin-left: 0; } }
+.sx .sx-title {
+  font-family: var(--fd); font-size: 1.3rem; line-height: 1.2; letter-spacing: -.01em;
+  color: var(--ink); margin: 0 0 8px; padding: 0; border: none;
+}
+.sx .sx-intro { font-size: .87rem; color: var(--muted); line-height: 1.6; margin: 0 0 14px; }
+.sx-steps {
+  display: grid; grid-template-columns: auto repeat(3,minmax(0,1fr));
+  gap: 10px; align-items: start; margin-bottom: 14px; padding: 10px 12px;
+  border: 1px solid rgba(0,82,147,.18); border-radius: 12px;
+  background: rgba(0,82,147,.035);
+}
+.sx-steps-title { font-size: .8rem; font-weight: 700; color: var(--blue); padding-top: 2px; }
+.sx-step { display: flex; gap: 7px; font-size: .76rem; line-height: 1.4; color: var(--ink-2); }
+.sx-step-num {
+  width: 19px; height: 19px; border-radius: 50%; flex: 0 0 19px;
+  display: grid; place-items: center; background: var(--blue); color: #fff;
+  font-size: .68rem; font-weight: 700;
+}
+@media (max-width: 650px) {
+  .sx-steps { grid-template-columns: 1fr; gap: 7px; }
+  .sx-steps-title { padding-top: 0; }
+}
+
+/* Chart beside controls so the selected inputs and results remain in one view */
+.sx-workspace {
+  display: grid; grid-template-columns: minmax(0,1fr) 250px;
+  gap: 14px; align-items: start;
+}
+.sx-main, .sx-side { min-width: 0; }
+.sx-side { display: grid; gap: 10px; }
+@media (max-width: 800px) {
+  .sx-workspace { grid-template-columns: minmax(0,1fr); gap: 12px; }
+  .sx-side { grid-template-columns: 1.15fr .85fr; align-items: start; }
+}
+@media (max-width: 600px) { .sx-side { grid-template-columns: 1fr; } }
+
+.sx-console {
+  display: grid; gap: 13px;
+  padding: 13px 16px 15px; border-radius: 14px;
+  background: rgba(45,143,122,.06); border: 1px solid rgba(45,143,122,.22);
+}
+.sx-controls { display: grid; gap: 12px; }
+.sx-field label {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+  font-size: .84rem; font-weight: 600; color: var(--ink-2); margin-bottom: 7px;
+}
+.sx-val {
+  font-family: var(--fd); font-size: 1.05rem; font-weight: 600;
+  color: var(--teal-dark); white-space: nowrap;
+}
+.sx-range {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 6px; border-radius: 999px; background: var(--line-med);
+  cursor: pointer; margin: 0; display: block;
+}
+.sx-range::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--teal-dark); border: 3px solid #fff;
+  box-shadow: 0 1px 4px rgba(20,17,15,.28); cursor: pointer;
+}
+.sx-range::-moz-range-thumb {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--teal-dark); border: 3px solid #fff;
+  box-shadow: 0 1px 4px rgba(20,17,15,.28); cursor: pointer;
+}
+.sx-range:focus-visible { outline: 2px solid var(--blue); outline-offset: 4px; }
+.sx-scale { display: flex; justify-content: space-between; font-size: .72rem; color: var(--faint); margin-top: 5px; }
+
+.sx-result {
+  display: flex; align-items: baseline; gap: 12px;
+  padding-bottom: 12px; border-bottom: 1px solid rgba(45,143,122,.22);
+}
+.sx-result-num { font-family: var(--fd); font-size: 2.1rem; line-height: 1; color: var(--teal-dark); flex-shrink: 0; }
+.sx-result-cap { font-size: .8rem; color: var(--muted); line-height: 1.35; }
+
+.sx-chart {
+  border: 1px solid var(--line-med); border-radius: 12px;
+  background: var(--bg); padding: 8px 6px 2px; overflow-x: auto;
+}
+.sx-chart svg { width: 100%; min-width: 390px; height: auto; display: block; }
+.sx-axis-label { font-size: 10.5px; fill: var(--muted); font-family: var(--fb); font-weight: 600; }
+.sx-tick { font-size: 10px; fill: var(--faint); font-family: var(--fb); }
+.sx-point-label { font-size: 9px; fill: var(--ink-2); font-family: var(--fb); font-weight: 600; }
+
+.sx-presets {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+  margin-top: 2px;
+}
+.sx-preset-label { flex-basis: 100%; font-size: .8rem; font-weight: 600; color: var(--ink-2); }
+.sx-preset {
+  appearance: none; border: 1px solid var(--line-med); border-radius: 8px;
+  background: var(--card); color: var(--ink-2); font: 600 .78rem var(--fb);
+  padding: 7px 11px; cursor: pointer;
+}
+.sx-preset:hover { border-color: var(--teal-dark); color: var(--teal-dark); }
+.sx-preset[aria-pressed="true"] {
+  background: var(--teal-dark); border-color: var(--teal-dark); color: #fff;
+}
+.sx-preset:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+.sx-panel {
+  padding: 12px 14px; border-radius: 12px;
+  background: var(--bg); border: 1px solid var(--line-med);
+}
+.sx-panel h3 { font-size: .8rem; font-weight: 700; color: var(--ink-2); margin: 0 0 6px; letter-spacing: -.01em; }
+.sx-panel p { font-size: .82rem; color: var(--muted); line-height: 1.5; margin: 0; }
+.sx-panel p + p { margin-top: 7px; }
+.sx-figure { font-family: var(--fd); font-size: 1.15rem; color: var(--ink); }
+.sx-compare-panel { margin-top: 10px; }
+.sx-compare-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 480px) { .sx-compare-list { grid-template-columns: 1fr; gap: 0; } }
+.sx-compare-row {
+  display: grid; grid-template-columns: 1fr auto;
+  gap: 4px 8px; align-items: baseline; padding: 5px 0;
+  font-size: .82rem; color: var(--muted);
+}
+.sx-compare-row + .sx-compare-row { border-left: 1px solid var(--line); padding-left: 10px; }
+@media (max-width: 480px) {
+  .sx-compare-row + .sx-compare-row { border-left: 0; border-top: 1px solid var(--line); padding-left: 0; }
+}
+.sx-compare-row strong { color: var(--ink-2); font-weight: 600; }
+.sx-compare-row span:nth-child(2) { grid-column: 1 / -1; grid-row: 2; }
+.sx-compare-change { font-family: var(--fd); font-size: 1rem; color: var(--teal-dark); text-align: right; }
+.sx-compare-note { font-size: .74rem !important; line-height: 1.4 !important; margin-top: 5px !important; }
+.sx-current-readout { display: grid; gap: 3px; }
+.sx-current-label { font-size: .76rem; line-height: 1.4; color: var(--muted); }
+.sx-sr {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/*
+ * ═══════════════════════════════════════════════════════════
+ * INTERACTION BLOCK — SELF CHECK
+ * ═══════════════════════════════════════════════════════════
+ */
+.interaction-wrap {
+  max-width: var(--max-read); margin: 0 auto;
+}
+.kc {
+  margin-top: 32px;
+  background: var(--card); border: 1px solid var(--line-med); border-radius: 18px;
+  overflow: hidden;
+}
+.kc-head {
+  padding: 20px 22px 18px;
+  border-bottom: 1px solid var(--line);
+  display: flex; align-items: flex-start; gap: 14px;
+}
+.kc-head-icon {
+  width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+  background: rgba(167,25,48,.08); border: 1px solid rgba(167,25,48,.16);
+  display: grid; place-items: center;
+}
+.kc-head-icon svg { width: 16px; height: 16px; stroke: var(--cherry); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.kc-heading { font-family: var(--fd); font-size: 1.25rem; line-height: 1.2; color: var(--ink); margin-bottom: 4px; }
+.kc-head-sub { font-size: .84rem; color: var(--muted); }
+.kc-body { padding: 24px 22px; }
+.kc-step-indicator {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 20px;
+}
+.kc-step-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--line-med); transition: background .2s;
+}
+.kc-step-dot.active { background: var(--cherry); }
+.kc-step-dot.done   { background: var(--teal-dark); }
+.kc-step-count { font-size: .76rem; color: var(--faint); margin-left: 4px; }
+.kc-question {
+  font-family: var(--fd); font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+  line-height: 1.25; color: var(--ink); margin-bottom: 22px;
+}
+.kc-options { display: grid; gap: 9px; }
+.kc-option {
+  width: 100%; text-align: left; background: var(--bg);
+  border: 1.5px solid var(--line-med); border-radius: 12px;
+  padding: 13px 16px; cursor: pointer; font-family: var(--fb);
+  display: flex; align-items: center; gap: 13px; transition: all .18s;
+}
+.kc-option:hover:not(:disabled) { border-color: rgba(167,25,48,.3); background: rgba(167,25,48,.04); }
+.kc-option:disabled { cursor: default; }
+.kc-option-letter {
+  width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0;
+  background: rgba(20,17,15,.06); border: 1px solid var(--line-med);
+  display: grid; place-items: center;
+  font-size: .78rem; font-weight: 700; color: var(--muted);
+  transition: all .18s;
+}
+.kc-option-text { font-size: .93rem; color: var(--ink-2); line-height: 1.45; flex: 1; }
+.kc-option.selected { border-color: rgba(167,25,48,.4); background: rgba(167,25,48,.05); }
+.kc-option.selected .kc-option-letter { background: var(--cherry); border-color: var(--cherry); color: #fff; }
+.kc-option.correct { border-color: rgba(45,143,122,.5); background: rgba(45,143,122,.07); }
+.kc-option.correct .kc-option-letter { background: var(--teal-dark); border-color: var(--teal-dark); color: #fff; }
+.kc-option.correct .kc-option-text { color: var(--teal-dark); font-weight: 500; }
+.kc-option.incorrect { border-color: rgba(167,25,48,.4); background: rgba(167,25,48,.06); }
+.kc-option.incorrect .kc-option-letter { background: var(--cherry); border-color: var(--cherry); color: #fff; }
+.kc-option.incorrect .kc-option-text { color: var(--cherry); }
+.kc-option.reveal-correct { border-color: rgba(45,143,122,.4); background: rgba(45,143,122,.05); }
+.kc-option.reveal-correct .kc-option-letter { background: var(--teal-dark); border-color: var(--teal-dark); color: #fff; }
+.kc-feedback {
+  margin-top: 18px; padding: 16px 18px; border-radius: 12px;
+  display: none; gap: 12px;
+  animation: kc-fade-up .3s ease forwards;
+}
+.kc-feedback.show { display: flex; }
+@keyframes kc-fade-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.kc-feedback.success { background: rgba(45,143,122,.08); border: 1px solid rgba(45,143,122,.25); }
+.kc-feedback.error   { background: rgba(167,25,48,.06);  border: 1px solid rgba(167,25,48,.2); }
+.kc-feedback-icon { flex-shrink: 0; width: 20px; height: 20px; margin-top: 1px; }
+.kc-feedback-icon svg { width: 20px; height: 20px; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.kc-feedback.success .kc-feedback-icon svg { stroke: var(--teal-dark); }
+.kc-feedback.error   .kc-feedback-icon svg { stroke: var(--cherry); }
+.kc-feedback-title { font-size: .82rem; font-weight: 700; margin-bottom: 4px; }
+.kc-feedback.success .kc-feedback-title { color: var(--teal-dark); }
+.kc-feedback.error   .kc-feedback-title { color: var(--cherry); }
+.kc-feedback-text { font-size: .88rem; color: var(--muted); line-height: 1.6; }
+.kc-feedback-text strong { color: var(--ink-2); font-weight: 600; }
+.kc-foot {
+  padding: 16px 22px;
+  border-top: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+}
+.kc-score { font-size: .82rem; color: var(--faint); }
+.kc-score strong { color: var(--ink-2); font-weight: 600; }
+.kc-next-btn {
+  display: inline-flex; align-items: center; gap: 8px; padding: 9px 18px;
+  border-radius: 999px; border: none; background: var(--cherry); color: #fff;
+  font-size: .85rem; font-weight: 600; cursor: pointer; font-family: var(--fb);
+  opacity: 0; pointer-events: none; transition: opacity .2s, background .15s;
+}
+.kc-next-btn.ready { opacity: 1; pointer-events: auto; }
+.kc-next-btn:hover { background: #8e1427; }
+.kc-next-btn svg { width: 14px; height: 14px; stroke: #fff; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.kc-complete {
+  padding: 28px 22px; text-align: center; display: none;
+  flex-direction: column; align-items: center; gap: 12px;
+}
+.kc-complete.show { display: flex; }
+.kc-complete-ring { width: 64px; height: 64px; margin-bottom: 4px; }
+.kc-complete-ring-bg   { fill: none; stroke: var(--line-med); stroke-width: 5; }
+.kc-complete-ring-fill { fill: none; stroke: var(--teal-dark); stroke-width: 5; stroke-linecap: round; stroke-dasharray: 170; stroke-dashoffset: 170; transition: stroke-dashoffset .7s cubic-bezier(.16,1,.3,1); }
+.kc-complete-pct { font-family: var(--fd); font-size: 1.6rem; color: var(--ink); }
+.kc-complete-label { font-size: .84rem; color: var(--muted); }
+.kc-complete-msg { font-size: .9rem; color: var(--muted); max-width: 36ch; line-height: 1.6; }
+.kc-retry-btn {
+  display: inline-flex; align-items: center; gap: 7px; padding: 8px 16px;
+  border-radius: 999px; border: 1px solid var(--line-med); background: var(--bg);
+  font-size: .8rem; font-weight: 600; color: var(--muted); cursor: pointer; font-family: var(--fb);
+  transition: all .15s;
+}
+.kc-retry-btn:hover { color: var(--ink); border-color: var(--line-med); background: var(--card); }
+.kc-retry-btn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ── REVEAL ── */
+.reveal { opacity: 0; transform: translateY(14px); transition: opacity .45s ease, transform .45s ease; }
+.reveal.visible { opacity: 1; transform: none; }
+
+@media (max-width: 640px) {
+  .article-shell { padding-top: 36px; }
+  .data-table { font-size: .84rem; }
+  .data-table thead th, .data-table tbody td { padding: 9px 12px; }
+}
+@media print {
+  .reveal { opacity: 1 !important; transform: none !important; }
+  .kc { display: none; }
+}
+
+/* PAGE BRIDGE */
+.page-bridge{max-width:860px;margin:48px auto 0;padding:20px 32px 0;border-top:1.5px solid #d4ccc6;}
+.page-bridge-label{font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#2d8f7a;margin-bottom:8px;}
+.page-bridge-text{font-size:.93rem;color:#5c534d;line-height:1.75;max-width:58ch;}
+
+/* ── CANONICAL MAIB HEADER (matches Weeks 1–2 and _Templates/AIB Page Header) ── */
+.maib-header{background:#ffffff;border-bottom:1px solid var(--line,#d4ccc6);box-shadow:0 4px 12px rgba(0,0,0,.05);position:relative;overflow:hidden;}
+.maib-header::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#CC0000 0%,#91004B 55%,#63C4AF 100%);}
+.maib-header-inner{max-width:960px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 24px;gap:16px;}
+.maib-logo-img{height:80px;width:auto;flex-shrink:0;}
+.maib-bu-logo{height:2rem;width:auto;flex-shrink:0;}
+@media(max-width:600px){.maib-header-inner{padding:10px 16px;}.maib-logo-img{height:56px;}.maib-bu-logo{height:1.6rem;}}
+@media(max-width:400px){.maib-bu-logo{display:none;}}
+
+/* ── TEXT WORDMARKS (test copy for public hosting) ──
+   The Blackboard page loads its logos from learn.bu.edu, which only works for
+   signed-in Blackboard users. Outside Blackboard those images would appear broken,
+   so this copy uses text in their place. */
+.maib-wordmark{font-family:"Barlow Condensed",Arial,sans-serif;font-weight:700;font-size:1.35rem;line-height:1.1;color:#13110f;letter-spacing:-.01em;flex-shrink:0;}
+.maib-wordmark small{display:block;font-family:"Barlow",Arial,sans-serif;font-weight:500;font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;color:#A71930;margin-top:3px;}
+.maib-wordmark-bu{font-size:1rem;color:#CC0000;margin-left:16px;}
+@media(max-width:400px){.maib-wordmark-bu{display:none;}}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+<header class="maib-header" role="banner">
+  <div class="maib-header-inner">
+    <span class="maib-wordmark">MS in AI in Business<small>Questrom School of Business</small></span>
+    <nav class="maib-crumb" aria-label="Breadcrumb" style="font-family:'Barlow',Arial,sans-serif;font-size:.8rem;color:#9e9895;white-space:nowrap;margin-left:auto;">Mod 1 &middot; Week 5</nav>
+    <span class="maib-wordmark maib-wordmark-bu">Boston University</span>
+  </div>
+</header>
+
+<!-- READING PROGRESS -->
+<div class="progress-wrap" aria-hidden="true">
+  <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<div class="article-shell">
+
+  <!-- ── ARTICLE HEADER ── -->
+  <header class="article-header reveal">
+    <h1 class="article-title">Reading <em>Logistic</em> Regression</h1>
+    <p class="article-lead">Many business decisions involve two possible outcomes: a subscriber stays or churns, a customer buys or does not buy, an application is approved or denied, or a transaction is fraudulent or legitimate. Logistic regression estimates the <strong>probability</strong> of one selected outcome.</p>
+  </header>
+
+  <main id="main">
+  <article class="article-body reveal">
+
+    <p>In the Disney+ example, the model estimates the chance that a particular subscriber will churn in the next 30 days. The result might read: <em>"This subscriber has a 72% probability of churning in the next 30 days."</em></p>
+
+    <p>A probability must remain between 0% and 100%. Logistic regression keeps its estimates within that range. Linear regression does not; when applied to a yes-or-no outcome, it may report a negative probability or a value above 100%.</p>
+
+    <h2>What Carries Over from Linear Regression?</h2>
+    <p>Logistic regression keeps two familiar questions from linear regression: does each input point toward a higher or lower likelihood of the outcome, and is the pattern statistically significant? The model assigns each input a number called a <strong>coefficient</strong>. The sign of that number shows direction. A positive sign (+) means that higher input values are associated with a higher likelihood of the outcome. A negative sign (−) means that higher input values are associated with a lower likelihood.</p>
+
+    <p>In the Disney+ churn model, the signs point to these relationships:</p>
+
+    <div class="data-table-wrap">
+      <table class="data-table" aria-label="Disney+ churn model: variable direction interpretation">
+        <caption>Disney+ churn model: variable direction</caption>
+        <thead>
+          <tr>
+            <th scope="col">Variable</th>
+            <th scope="col">Coefficient direction</th>
+            <th scope="col">Interpretation</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>days_since_last_login</strong></td>
+            <td>Positive (+)</td>
+            <td>More days since last login is associated with higher churn likelihood</td>
+          </tr>
+          <tr>
+            <td><strong>weekly_view_hrs</strong></td>
+            <td>Negative (−)</td>
+            <td>More weekly viewing is associated with lower churn likelihood</td>
+          </tr>
+          <tr>
+            <td><strong>categories_used</strong></td>
+            <td>Negative (−)</td>
+            <td>Using more content categories is associated with lower churn likelihood</td>
+          </tr>
+          <tr>
+            <td><strong>promo_subscriber</strong></td>
+            <td>Positive (+)</td>
+            <td>Promotional subscribers may be more likely to churn</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>Statistical significance carries over too. As in linear regression, the <span class="vocab" title="A p-value measures how compatible the observed coefficient is with a specified null hypothesis under the model's assumptions. A small p-value provides evidence against that null hypothesis; it does not measure effect size or establish causation.">p-value</span> helps analysts assess the evidence against a null hypothesis of no relationship under the model's assumptions. Analysts consider the coefficient's direction, uncertainty, practical size, and business context together.</p>
+
+    <h2>What Does Not Carry Over?</h2>
+    <p>A logistic regression coefficient&rsquo;s sign gives you direction; predicted probabilities give you size.</p>
+
+    <p>In linear regression, the coefficient size is often easier to read. If a sales model gives advertising spend a coefficient of 2.50, each additional dollar of advertising is associated with $2.50 more in weekly sales, holding the other inputs constant. The coefficient uses the same units as the predicted sales amount.</p>
+
+    <p>Logistic regression converts its inputs into a probability between 0% and 100%. Because the model uses a curved relationship, the same input change can produce a small change in estimated risk for one subscriber and a larger change for another subscriber. A negative coefficient for <em>weekly_view_hrs</em> still means that more viewing is associated with lower churn risk. To describe the size of that relationship, compare predicted probabilities for relevant subscriber profiles or calculate an <span class="vocab" title="An odds ratio summarizes how the odds of the outcome change when an input increases by one unit. Analysts calculate it from a logistic regression coefficient.">odds ratio</span>.</p>
+
+    <section class="sx reveal" id="sx" aria-labelledby="sxTitle">
+      <h2 class="sx-title" id="sxTitle">Compare estimated churn risk before and after one more day</h2>
+      <p class="sx-intro">On the previous page, the slider showed why logistic regression is better suited to predicting churn: the curved model keeps every estimate between 0% and 100%. This activity takes the next step. It shows how a retention manager can read the model's estimates for subscribers with different activity patterns.</p>
+
+      <div class="sx-steps" id="sxSteps" aria-label="How to use this activity">
+        <div class="sx-steps-title">Try this</div>
+        <div class="sx-step"><span class="sx-step-num" aria-hidden="true">1</span><span>Start with 3 days selected and viewing set to 8 hours.</span></div>
+        <div class="sx-step"><span class="sx-step-num" aria-hidden="true">2</span><span>Select 15 days.</span></div>
+        <div class="sx-step"><span class="sx-step-num" aria-hidden="true">3</span><span>Compare the risk increases, then move either slider.</span></div>
+      </div>
+
+      <div class="sx-workspace">
+        <div class="sx-main">
+          <div class="sx-chart">
+            <svg id="sxSvg" viewBox="0 0 560 214" role="img" aria-labelledby="sxSvgTitle">
+              <title id="sxSvgTitle">Predicted churn probability plotted against days since last login</title>
+            </svg>
+          </div>
+
+          <div class="sx-panel sx-compare-panel">
+            <h3>Compare one more day without a login</h3>
+            <div class="sx-compare-list">
+              <div class="sx-compare-row">
+                <strong>From 3 to 4 days</strong>
+                <span id="sxCompare3Prob">—</span>
+                <span class="sx-compare-change" id="sxCompare3Change">—</span>
+              </div>
+              <div class="sx-compare-row">
+                <strong>From 15 to 16 days</strong>
+                <span id="sxCompare15Prob">—</span>
+                <span class="sx-compare-change" id="sxCompare15Change">—</span>
+              </div>
+            </div>
+            <p class="sx-compare-note">A change from 8.5% to 10.3% is an increase of 1.8 percentage points.</p>
+          </div>
+        </div>
+
+        <div class="sx-side">
+          <div class="sx-console">
+            <div class="sx-result">
+              <div class="sx-result-num" id="sxProb">&nbsp;</div>
+              <div class="sx-result-cap">Estimated chance this subscriber will churn in the next 30 days</div>
+            </div>
+            <div class="sx-controls">
+              <div class="sx-field">
+                <label for="sxDays">Days since last login <span class="sx-val" id="sxDaysVal">3 days</span></label>
+                <input class="sx-range" type="range" id="sxDays" min="0" max="30" step="1" value="3" aria-describedby="sxSteps" />
+                <div class="sx-scale"><span>0 days</span><span>30 days</span></div>
+                <div class="sx-presets" role="group" aria-label="Set days since last login for comparison">
+                  <span class="sx-preset-label">Quick comparison:</span>
+                  <button class="sx-preset" type="button" data-sx-days="3" aria-pressed="true">3 days</button>
+                  <button class="sx-preset" type="button" data-sx-days="15" aria-pressed="false">15 days</button>
+                </div>
+              </div>
+              <div class="sx-field">
+                <label for="sxHrs">Viewing hours this week <span class="sx-val" id="sxHrsVal">8 hrs</span></label>
+                <input class="sx-range" type="range" id="sxHrs" min="0" max="25" step="1" value="8" aria-describedby="sxSteps" />
+                <div class="sx-scale"><span>0 hrs</span><span>25 hrs</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sx-panel">
+            <h3>Selected subscriber</h3>
+            <div class="sx-current-readout">
+              <span class="sx-current-label">Estimated change after one more day without a login</span>
+              <span class="sx-figure" id="sxMarginal">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p class="sx-sr" id="sxLive" aria-live="polite"></p>
+    </section>
+
+    <p>The model uses +0.22 as its technical number for days since last login; analysts call this number a coefficient. The positive sign means that more days without a login are associated with higher churn risk. The slider shows why managers should not treat +0.22 as the same percentage-point increase for every subscriber: at 8 viewing hours, the estimated increase is 1.8 percentage points from 3 to 4 days and 5.3 percentage points from 15 to 16 days. For a retention decision, compare predicted probabilities for the subscriber profiles the team may target.</p>
+
+    <div class="data-table-wrap">
+      <table class="data-table" aria-label="Linear vs. logistic regression concept comparison">
+        <caption>Linear vs. logistic regression: key distinctions</caption>
+        <thead>
+          <tr>
+            <th scope="col">Concept</th>
+            <th scope="col">Linear regression</th>
+            <th scope="col">Logistic regression</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Direction of relationship</strong></td>
+            <td>Read from the + or − sign</td>
+            <td>Read from the + or − sign</td>
+          </tr>
+          <tr>
+            <td><strong>P-value</strong></td>
+            <td>Used to assess statistical significance</td>
+            <td>Used to assess statistical significance</td>
+          </tr>
+          <tr>
+            <td><strong>Size of coefficient</strong></td>
+            <td>Often read in the outcome's units</td>
+            <td>Requires predicted probabilities or an odds ratio</td>
+          </tr>
+          <tr>
+            <td><strong>Prediction output</strong></td>
+            <td>A numeric amount, such as sales</td>
+            <td>A probability between 0% and 100%</td>
+          </tr>
+          <tr>
+            <td><strong>Best for</strong></td>
+            <td>Numeric outcomes</td>
+            <td>Yes-or-no outcomes</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Why Businesses Use Logistic Regression</h2>
+    <p>A retention team needs an estimated chance that each subscriber will leave. Logistic regression provides that probability and keeps it between 0% and 100%.</p>
+
+    <p>The model can also show which recorded behaviors are associated with higher or lower churn risk. Recent login activity, weekly viewing hours, the number of content categories used, and promotional enrollment may help a retention team decide which subscribers to contact and which offers to test.</p>
+
+    <p>Logistic regression can support two business questions:</p>
+
+    <div class="data-table-wrap">
+      <table class="data-table" aria-label="Logistic regression as a bridge between diagnostic and predictive analytics">
+        <caption>Logistic regression: analytics type</caption>
+        <thead>
+          <tr>
+            <th scope="col">Analytics type</th>
+            <th scope="col">Question</th>
+            <th scope="col">How logistic regression helps</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Diagnostic</strong></td>
+            <td>Why is churn more likely for some subscribers?</td>
+            <td>Shows which variables are associated with higher or lower churn likelihood</td>
+          </tr>
+          <tr>
+            <td><strong>Predictive</strong></td>
+            <td>Which subscribers are likely to churn next?</td>
+            <td>Estimates each subscriber's probability of churn</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>The model estimates which subscribers may churn and shows which recorded behaviors are associated with the estimate. More complex models may predict well while providing less direct explanation.</p>
+
+  </article>
+
+  <!-- INTERACTION BLOCK: SELF CHECK -->
+  <div class="sec-divider reveal">
+    <span class="sec-divider-label">Self Check</span>
+    <div class="sec-divider-rule"></div>
+  </div>
+
+  <div class="interaction-wrap reveal">
+    <div class="kc" id="kc" aria-label="Self Check">
+
+      <div class="kc-head">
+        <div class="kc-head-icon">
+          <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        </div>
+        <div class="kc-head-text">
+          <h2 class="kc-heading">Self Check</h2>
+          <div class="kc-head-sub">Answer each question before continuing. These questions are not graded.</div>
+        </div>
+      </div>
+
+      <div class="kc-body" id="kcBody">
+        <div class="kc-step-indicator" id="kcSteps"></div>
+        <div class="kc-question" id="kcQuestion" role="heading" aria-level="2"></div>
+        <div class="kc-options" id="kcOptions" role="list"></div>
+        <div class="kc-feedback" id="kcFeedback" role="alert">
+          <div class="kc-feedback-icon">
+            <svg id="kcFeedbackIcon" viewBox="0 0 24 24"></svg>
+          </div>
+          <div class="kc-feedback-body">
+            <div class="kc-feedback-title" id="kcFeedbackTitle"></div>
+            <div class="kc-feedback-text"  id="kcFeedbackText"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="kc-foot" id="kcFoot">
+        <div class="kc-score" id="kcScore">Question <strong id="kcCurrent">1</strong> of <strong id="kcTotal">?</strong></div>
+        <button class="kc-next-btn" id="kcNextBtn" type="button">
+          <span id="kcNextLabel">Next question</span>
+          <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+
+      <div class="kc-complete" id="kcComplete">
+        <svg class="kc-complete-ring" viewBox="0 0 56 56" aria-hidden="true">
+          <circle class="kc-complete-ring-bg"   cx="28" cy="28" r="27"/>
+          <circle class="kc-complete-ring-fill" id="kcRingFill" cx="28" cy="28" r="27" transform="rotate(-90 28 28)"/>
+        </svg>
+        <div class="kc-complete-pct" id="kcCompletePct"></div>
+        <div class="kc-complete-label" id="kcCompleteLabel"></div>
+        <p class="kc-complete-msg" id="kcCompleteMsg"></p>
+        <button class="kc-retry-btn" id="kcRetryBtn" type="button">
+          <svg viewBox="0 0 24 24"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 .49-4.99"/></svg>
+          Try again
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="page-bridge reveal" role="note" aria-label="What comes next">
+    <div class="page-bridge-label">Coming up</div>
+    <p class="page-bridge-text">Logistic regression gives managers a relatively direct view of the relationships used in a prediction. The next page asks when that transparency is necessary, and when a harder-to-explain model deserves consideration because it demonstrates better performance.</p>
+  </div>
+
+</main>
+
+</div><!-- /article-shell -->
+
+<script>
+(function () {
+
+  /* ── Reading progress bar ── */
+  var bar = document.getElementById('progressBar');
+  window.addEventListener('scroll', function () {
+    var h = document.documentElement;
+    bar.style.width = Math.min(100, (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100) + '%';
+  }, { passive: true });
+
+  /* ── Scroll reveal ── */
+  var revealIo = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) { e.target.classList.add('visible'); revealIo.unobserve(e.target); }
+    });
+  }, { threshold: 0.06 });
+  document.querySelectorAll('.reveal').forEach(function (el) { revealIo.observe(el); });
+
+  /* ── Deep dive accordions ── */
+  document.querySelectorAll('[data-dive]').forEach(function (dive) {
+    var trigger = dive.querySelector('.deep-dive-trigger');
+    trigger.addEventListener('click', function () {
+      var open = dive.classList.toggle('open');
+      trigger.setAttribute('aria-expanded', String(open));
+    });
+  });
+
+  /* ══════════════════════════════════════════════════════════
+     PROBABILITY CURVE EXPLORER
+     Illustrative coefficients, not fitted values.
+  ══════════════════════════════════════════════════════════ */
+  (function () {
+    var svg = document.getElementById('sxSvg');
+    if (!svg) return;
+
+    var B0 = -1.6, B_DAYS = 0.22, B_HRS = -0.18;
+    var DMIN = 0, DMAX = 30;
+    var PMIN = 0, PMAX = 1;
+    var X0 = 54, X1 = 542, Y0 = 12, Y1 = 178;
+    var NS = 'http://www.w3.org/2000/svg';
+
+    function prob(d, h) { return 1 / (1 + Math.exp(-(B0 + B_DAYS * d + B_HRS * h))); }
+    function xf(d) { return X0 + (d - DMIN) / (DMAX - DMIN) * (X1 - X0); }
+    function yf(p) { return Y0 + (PMAX - p) / (PMAX - PMIN) * (Y1 - Y0); }
+    function pct(p) { return Math.round(p * 100) + '%'; }
+    /* One source for both the displayed probability and the change between two of them,
+       so a learner who subtracts what is on screen gets the number the page reports. */
+    function pct1v(p) { return Math.round(p * 1000) / 10; }
+    function pct1(p) { return pct1v(p).toFixed(1) + '%'; }
+
+    function el(name, attrs, text) {
+      var n = document.createElementNS(NS, name);
+      for (var k in attrs) { if (attrs.hasOwnProperty(k)) n.setAttribute(k, attrs[k]); }
+      if (text != null) n.textContent = text;
+      return n;
+    }
+
+    var sxDays     = document.getElementById('sxDays');
+    var sxHrs      = document.getElementById('sxHrs');
+    var sxDaysVal  = document.getElementById('sxDaysVal');
+    var sxHrsVal   = document.getElementById('sxHrsVal');
+    var sxProb     = document.getElementById('sxProb');
+    var sxMarginal = document.getElementById('sxMarginal');
+    var sxCompare3Prob = document.getElementById('sxCompare3Prob');
+    var sxCompare3Change = document.getElementById('sxCompare3Change');
+    var sxCompare15Prob = document.getElementById('sxCompare15Prob');
+    var sxCompare15Change = document.getElementById('sxCompare15Change');
+    var sxLive     = document.getElementById('sxLive');
+    var svgTitle   = svg.querySelector('title');
+    var presetButtons = document.querySelectorAll('[data-sx-days]');
+
+    function oneDayChange(d, h) {
+      if (d >= DMAX) return null;
+      return pct1v(prob(d + 1, h)) - pct1v(prob(d, h));
+    }
+
+    /* Draw the "one day later" label near the endpoint dot without overlapping the
+       curve. Approximate glyph metrics for the .sx-point-label style (9px Barlow):
+       width of the text and its ascent/descent below the baseline. */
+    var LABEL_W = 52, LABEL_ASCENT = 7, LABEL_DESCENT = 2, LABEL_GAP = 5;
+
+    function xToD(x) { return DMIN + (x - X0) / (X1 - X0) * (DMAX - DMIN); }
+
+    /* Highest (min y) and lowest (max y) the curve reaches across an x span, at hrs h. */
+    function curveBandOver(xStart, xEnd, h) {
+      var top = Infinity, bottom = -Infinity, N = 30;
+      for (var t = 0; t <= N; t++) {
+        var x = xStart + (xEnd - xStart) * t / N;
+        var dd = xToD(x);
+        if (dd < DMIN || dd > DMAX) continue;
+        var y = yf(prob(dd, h));
+        if (y < top) top = y;
+        if (y > bottom) bottom = y;
+      }
+      if (top === Infinity) { top = bottom = yf(prob(xToD(xStart), h)); }
+      return { top: top, bottom: bottom };
+    }
+
+    function placeOneDayLabel(nextDay, pNext, h) {
+      var xEnd = xf(nextDay), yEnd = yf(pNext);
+
+      /* Horizontal side: to the right of the dot if the label fits inside the plot,
+         otherwise to the left. */
+      var anchor, xStart, xTextEnd, x;
+      if (xEnd + 8 + LABEL_W <= X1 + 2) {
+        anchor = 'start'; x = xEnd + 8; xStart = x; xTextEnd = x + LABEL_W;
+      } else {
+        anchor = 'end'; x = xEnd - 8; xTextEnd = x; xStart = x - LABEL_W;
+      }
+
+      /* Vertical side: clear the curve band that runs under the label. */
+      var band = curveBandOver(xStart, xTextEnd, h);
+      var baselineAbove = band.top - LABEL_GAP - LABEL_DESCENT;
+      var baselineBelow = band.bottom + LABEL_GAP + LABEL_ASCENT;
+      var fitsAbove = (baselineAbove - LABEL_ASCENT) >= (Y0 + 1);
+      var fitsBelow = (baselineBelow + LABEL_DESCENT) <= (Y1 - 1);
+
+      var baseline;
+      if (fitsAbove && fitsBelow) {
+        baseline = Math.abs(baselineAbove - yEnd) <= Math.abs(baselineBelow - yEnd)
+          ? baselineAbove : baselineBelow;
+      } else if (fitsAbove) {
+        baseline = baselineAbove;
+      } else if (fitsBelow) {
+        baseline = baselineBelow;
+      } else {
+        baseline = baselineAbove;
+      }
+
+      svg.appendChild(el('text', { x: x, y: baseline, class: 'sx-point-label',
+        'text-anchor': anchor }, 'one day later'));
+    }
+
+    function draw() {
+      var d = Number(sxDays.value);
+      var h = Number(sxHrs.value);
+
+      /* Clear the plot, then restore the accessible name element */
+      while (svg.firstChild) { svg.removeChild(svg.firstChild); }
+      svg.appendChild(svgTitle);
+
+      /* Gridlines and probability ticks */
+      [0, 0.25, 0.5, 0.75, 1].forEach(function (p) {
+        var solid = (p === 0 || p === 1);
+        svg.appendChild(el('line', { x1: X0, y1: yf(p), x2: X1, y2: yf(p),
+          stroke: solid ? 'rgba(20,17,15,.22)' : 'rgba(20,17,15,.08)', 'stroke-width': 1 }));
+        svg.appendChild(el('text', { x: X0 - 8, y: yf(p) + 3.5, 'text-anchor': 'end', class: 'sx-tick' },
+          Math.round(p * 100) + '%'));
+      });
+
+      /* Day ticks */
+      [0, 5, 10, 15, 20, 25, 30].forEach(function (dd) {
+        svg.appendChild(el('text', { x: xf(dd), y: Y1 + 15, 'text-anchor': 'middle', class: 'sx-tick' }, dd));
+      });
+      svg.appendChild(el('text', { x: (X0 + X1) / 2, y: Y1 + 31, 'text-anchor': 'middle', class: 'sx-axis-label' },
+        'Days since last login'));
+      svg.appendChild(el('text', { x: 13, y: (Y0 + Y1) / 2, 'text-anchor': 'middle', class: 'sx-axis-label',
+        transform: 'rotate(-90 13 ' + ((Y0 + Y1) / 2) + ')' }, 'Estimated chance of churn'));
+
+      /* Logistic curve */
+      var path = '';
+      for (var dd = DMIN; dd <= DMAX + 0.001; dd += 0.5) {
+        path += (path ? 'L' : 'M') + xf(dd).toFixed(2) + ' ' + yf(prob(dd, h)).toFixed(2) + ' ';
+      }
+      svg.appendChild(el('path', { d: path, fill: 'none', stroke: '#2d8f7a', 'stroke-width': 2.6,
+        'stroke-linecap': 'round' }));
+
+      /* Current position and the estimate one day later */
+      var p = prob(d, h);
+      var nextDay = Math.min(d + 1, DMAX);
+      var pNext = prob(nextDay, h);
+      svg.appendChild(el('line', { x1: xf(d), y1: yf(p), x2: xf(d), y2: yf(PMIN),
+        stroke: 'rgba(20,17,15,.25)', 'stroke-width': 1, 'stroke-dasharray': '3 4' }));
+      svg.appendChild(el('line', { x1: X0, y1: yf(p), x2: xf(d), y2: yf(p),
+        stroke: 'rgba(20,17,15,.25)', 'stroke-width': 1, 'stroke-dasharray': '3 4' }));
+      if (nextDay > d) {
+        svg.appendChild(el('line', { x1: xf(d), y1: yf(p), x2: xf(nextDay), y2: yf(pNext),
+          stroke: '#A71930', 'stroke-width': 3, 'stroke-linecap': 'round' }));
+        svg.appendChild(el('circle', { cx: xf(nextDay), cy: yf(pNext), r: 5.5, fill: '#ffffff',
+          stroke: '#A71930', 'stroke-width': 2.5 }));
+        /* Position the "one day later" label so it never overlaps the curve. The label
+           is placed to the side of the endpoint dot (right when there is room, otherwise
+           left near the plot edge), then offset above or below the curve: we sample the
+           curve's height across the label's horizontal span and put the text band fully
+           clear of it, preferring the side nearer the dot. */
+        placeOneDayLabel(nextDay, pNext, h);
+      }
+      svg.appendChild(el('circle', { cx: xf(d), cy: yf(p), r: 7, fill: '#2d8f7a',
+        stroke: '#ffffff', 'stroke-width': 2.5 }));
+
+      /* Readouts */
+      sxDaysVal.textContent = d + (d === 1 ? ' day' : ' days');
+      sxHrsVal.textContent  = h + (h === 1 ? ' hr' : ' hrs');
+      sxProb.textContent    = pct(p);
+
+      var delta = oneDayChange(d, h);
+      sxMarginal.textContent = delta == null ? 'Not available at the end of the plotted range' :
+        '+' + delta.toFixed(1) + ' percentage points';
+
+      var p3 = prob(3, h), p4 = prob(4, h), delta3 = oneDayChange(3, h);
+      var p15 = prob(15, h), p16 = prob(16, h), delta15 = oneDayChange(15, h);
+      sxCompare3Prob.textContent = pct1(p3) + ' to ' + pct1(p4);
+      sxCompare3Change.textContent = '+' + delta3.toFixed(1) + ' percentage points';
+      sxCompare15Prob.textContent = pct1(p15) + ' to ' + pct1(p16);
+      sxCompare15Change.textContent = '+' + delta15.toFixed(1) + ' percentage points';
+
+      presetButtons.forEach(function (button) {
+        button.setAttribute('aria-pressed', String(Number(button.getAttribute('data-sx-days')) === d));
+      });
+
+      svgTitle.textContent = 'Predicted churn probability against days since last login at ' + h +
+        ' weekly viewing hours. At ' + d + ' days the model predicts ' + pct(p) +
+        (nextDay > d ? '; one day later it predicts ' + pct(pNext) + '.' : '.') ;
+      sxLive.textContent = 'At ' + d + ' days since last login and ' + h + ' weekly viewing hours, ' +
+        'predicted churn probability is ' + pct(p) + (delta == null ?
+        '. The selected value is the end of the plotted range.' :
+        '. One more day changes it by +' + delta.toFixed(1) + ' percentage points.');
+    }
+
+    sxDays.addEventListener('input', draw);
+    sxHrs.addEventListener('input', draw);
+    presetButtons.forEach(function (button) {
+      button.addEventListener('click', function () {
+        sxDays.value = button.getAttribute('data-sx-days');
+        draw();
+      });
+    });
+    draw();
+  })();
+
+  /* ══════════════════════════════════════════════════════════
+     SELF CHECK ENGINE
+  ══════════════════════════════════════════════════════════ */
+  var questions = [
+    {
+      q: "In the Disney+ churn model, what does a logistic regression score of 0.72 represent for a given subscriber?",
+      options: [
+        { text: "The subscriber has a 72% probability of churning within the defined time window.", correct: true },
+        { text: "The subscriber is 72% more likely to churn than the average subscriber.", correct: false },
+        { text: "The model is 72% confident that the subscriber will be classified as a churner.", correct: false },
+        { text: "The subscriber will churn in approximately 72 days.", correct: false }
+      ],
+      feedback: {
+        correct:   "A score of 0.72 means the model estimates a 72% probability that this subscriber will churn within the stated time window. Logistic regression reports probabilities between 0% and 100% for yes-or-no outcomes.",
+        incorrect: "A score of 0.72 is the model's estimated probability for this subscriber. It does not compare the subscriber with the average or report the model's confidence. Review the opening explanation of what logistic regression predicts."
+      }
+    },
+    {
+      q: "In the Disney+ model, the coefficient for categories_used is negative. What can you conclude from this?",
+      options: [
+        { text: "Using more content categories is associated with lower churn likelihood.", correct: true },
+        { text: "Each additional category used reduces churn probability by the size of the coefficient.", correct: false },
+        { text: "categories_used is not a statistically significant predictor of churn.", correct: false },
+        { text: "The model should exclude categories_used because negative coefficients indicate a poor fit.", correct: false }
+      ],
+      feedback: {
+        correct:   "The negative sign gives the direction of the relationship: more content categories used is associated with lower churn likelihood. The sign does not show how large the probability change is.",
+        incorrect: "The negative sign gives direction only. It does not show statistical significance or a fixed percentage-point change. In this model, more content categories used is associated with lower churn likelihood."
+      }
+    },
+    {
+      q: "A colleague reviews the logistic regression output and says: \"weekly_view_hrs has a coefficient of −0.06, so each additional weekly viewing hour reduces churn probability by 6 percentage points.\" What is the problem with this interpretation?",
+      options: [
+        { text: "The direction is correct, but −0.06 does not mean a 6-percentage-point decrease in churn risk.", correct: true },
+        { text: "There is no problem; logistic regression coefficients are interpreted the same way as linear regression coefficients.", correct: false },
+        { text: "A negative coefficient in logistic regression indicates a positive relationship with the outcome.", correct: false },
+        { text: "The interpretation is only a problem if the coefficient is not statistically significant.", correct: false }
+      ],
+      feedback: {
+        correct:   "The negative sign gives the correct direction: more viewing is associated with lower churn risk. The error is treating −0.06 as a direct 6-percentage-point change. Compare predicted probabilities or calculate an odds ratio to describe the size of the relationship.",
+        incorrect: "The negative sign correctly points toward lower churn risk as viewing increases. The error is reading −0.06 as a 6-percentage-point change. In logistic regression, describe the size by comparing predicted probabilities or calculating an odds ratio."
+      }
+    }
+  ];
+
+  /* ── Fisher-Yates shuffle ── */
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+    }
+    return a;
+  }
+
+  /* ── Engine state ── */
+  var currentQ        = 0;
+  var correctCount    = 0;
+  var answered        = [];
+  var shuffledOptions = [];
+  var LETTERS = ['A', 'B', 'C', 'D', 'E'];
+
+  var kcQuestion      = document.getElementById('kcQuestion');
+  var kcOptions       = document.getElementById('kcOptions');
+  var kcFeedback      = document.getElementById('kcFeedback');
+  var kcFeedbackTitle = document.getElementById('kcFeedbackTitle');
+  var kcFeedbackText  = document.getElementById('kcFeedbackText');
+  var kcFeedbackIcon  = document.getElementById('kcFeedbackIcon');
+  var kcSteps         = document.getElementById('kcSteps');
+  var kcCurrent       = document.getElementById('kcCurrent');
+  var kcTotal         = document.getElementById('kcTotal');
+  var kcNextBtn       = document.getElementById('kcNextBtn');
+  var kcNextLabel     = document.getElementById('kcNextLabel');
+  var kcBody          = document.getElementById('kcBody');
+  var kcComplete      = document.getElementById('kcComplete');
+  var kcFoot          = document.getElementById('kcFoot');
+  var kcRetryBtn      = document.getElementById('kcRetryBtn');
+  var kcCompletePct   = document.getElementById('kcCompletePct');
+  var kcCompleteLabel = document.getElementById('kcCompleteLabel');
+  var kcCompleteMsg   = document.getElementById('kcCompleteMsg');
+  var kcRingFill      = document.getElementById('kcRingFill');
+
+  if (kcTotal) kcTotal.textContent = questions.length;
+
+  function renderSteps() {
+    kcSteps.innerHTML = '';
+    questions.forEach(function (_, i) {
+      var dot = document.createElement('div');
+      dot.className = 'kc-step-dot' +
+        (i === currentQ ? ' active' : '') +
+        (i < currentQ  ? ' done'   : '');
+      kcSteps.appendChild(dot);
+    });
+    var countSpan = document.createElement('span');
+    countSpan.className = 'kc-step-count';
+    countSpan.textContent = (currentQ + 1) + ' / ' + questions.length;
+    kcSteps.appendChild(countSpan);
+    if (kcCurrent) kcCurrent.textContent = currentQ + 1;
+  }
+
+  function renderQuestion() {
+    var q = questions[currentQ];
+    shuffledOptions = shuffle(q.options);
+    kcQuestion.textContent = q.q;
+    kcOptions.innerHTML = '';
+    kcFeedback.className = 'kc-feedback';
+    kcNextBtn.classList.remove('ready');
+    shuffledOptions.forEach(function (opt, i) {
+      var btn = document.createElement('button');
+      btn.className = 'kc-option';
+      btn.type = 'button';
+      btn.setAttribute('role', 'listitem');
+      btn.innerHTML =
+        '<div class="kc-option-letter">' + LETTERS[i] + '</div>' +
+        '<div class="kc-option-text">'   + opt.text   + '</div>';
+      btn.addEventListener('click', function () { handleAnswer(opt.correct, btn, q); });
+      kcOptions.appendChild(btn);
+    });
+    renderSteps();
+  }
+
+  function handleAnswer(isCorrect, chosenBtn, q) {
+    kcOptions.querySelectorAll('.kc-option').forEach(function (b) { b.disabled = true; });
+    chosenBtn.classList.add(isCorrect ? 'correct' : 'incorrect');
+    if (!isCorrect) {
+      var allBtns = kcOptions.querySelectorAll('.kc-option');
+      shuffledOptions.forEach(function (opt, i) {
+        if (opt.correct) { allBtns[i].classList.add('reveal-correct'); }
+      });
+    }
+    if (isCorrect) correctCount++;
+    answered.push(isCorrect);
+    kcFeedbackTitle.textContent = isCorrect ? 'Correct.' : 'Incorrect.';
+    kcFeedbackText.innerHTML    = isCorrect ? q.feedback.correct : q.feedback.incorrect;
+    kcFeedbackIcon.innerHTML    = isCorrect
+      ? '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-9-9"/>'
+      : '<circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>';
+    kcFeedback.className = 'kc-feedback show ' + (isCorrect ? 'success' : 'error');
+    kcNextLabel.textContent = currentQ + 1 < questions.length ? 'Next question' : 'See results';
+    kcNextBtn.classList.add('ready');
+  }
+
+  kcNextBtn && kcNextBtn.addEventListener('click', function () {
+    currentQ++;
+    if (currentQ < questions.length) {
+      renderQuestion();
+    } else {
+      showComplete();
+    }
+  });
+
+  function showComplete() {
+    kcBody.style.display = 'none';
+    kcFoot.style.display = 'none';
+    kcComplete.classList.add('show');
+    var pct = Math.round((correctCount / questions.length) * 100);
+    kcCompletePct.textContent = pct + '%';
+    kcCompleteLabel.textContent = correctCount + ' of ' + questions.length + ' correct';
+    if (pct === 100) {
+      kcCompleteMsg.textContent = "Perfect score. You're ready to move on.";
+    } else if (pct >= 60) {
+      kcCompleteMsg.textContent = "Review the sections on what carries over and what does not carry over before continuing.";
+    } else {
+      kcCompleteMsg.textContent = "Take another pass through the reading, then try again.";
+    }
+    var circumference = 2 * Math.PI * 27;
+    if (kcRingFill) {
+      setTimeout(function () {
+        kcRingFill.style.strokeDashoffset = circumference - (pct / 100) * circumference;
+      }, 100);
+    }
+  }
+
+  kcRetryBtn && kcRetryBtn.addEventListener('click', function () {
+    currentQ = 0; correctCount = 0; answered = []; shuffledOptions = [];
+    kcComplete.classList.remove('show');
+    kcBody.style.display = '';
+    kcFoot.style.display = '';
+    if (kcRingFill) kcRingFill.style.strokeDashoffset = '170';
+    renderQuestion();
+  });
+
+  /* Init */
+  renderQuestion();
+
+})();
+</script>
+<script>
+(function () {
+  /* Only one definition stays open at a time. */
+  var openTerm = null;
+
+  function closeTerm(entry) {
+    if (!entry) return;
+    entry.btn.setAttribute('aria-expanded', 'false');
+    entry.def.hidden = true;
+    if (openTerm === entry) openTerm = null;
+  }
+
+  function openTermEntry(entry) {
+    if (openTerm && openTerm !== entry) closeTerm(openTerm);
+    entry.btn.setAttribute('aria-expanded', 'true');
+    entry.def.hidden = false;
+    openTerm = entry;
+  }
+
+  function enhanceVocabTerms(root) {
+    var scope = root || document;
+    var terms = scope.querySelectorAll('span.vocab[title]');
+    Array.prototype.forEach.call(terms, function (span) {
+      if (span.dataset.vocabEnhanced) return;
+      span.dataset.vocabEnhanced = 'true';
+
+      var definition = span.getAttribute('title');
+      var termText = span.textContent;
+      var id = 'vocabDef-' + Math.random().toString(36).slice(2, 10);
+
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'vocab-term';
+      btn.setAttribute('aria-expanded', 'false');
+      btn.setAttribute('aria-controls', id);
+      btn.textContent = termText;
+
+      var srHint = document.createElement('span');
+      srHint.className = 'vocab-sr';
+      srHint.textContent = ' (select to view definition)';
+      btn.appendChild(srHint);
+
+      var defEl = document.createElement('span');
+      defEl.className = 'vocab-definition';
+      defEl.id = id;
+      defEl.setAttribute('role', 'note');
+      defEl.hidden = true;
+      defEl.textContent = definition;
+
+      span.replaceWith(btn, defEl);
+
+      var entry = { btn: btn, def: defEl };
+
+      btn.addEventListener('click', function () {
+        if (btn.getAttribute('aria-expanded') === 'true') {
+          closeTerm(entry);
+        } else {
+          openTermEntry(entry);
+        }
+      });
+
+      btn.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && btn.getAttribute('aria-expanded') === 'true') {
+          closeTerm(entry);
+          btn.focus();
+        }
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () { enhanceVocabTerms(document); });
+  } else {
+    enhanceVocabTerms(document);
+  }
+
+  if (window.MutationObserver) {
+    var vocabObserver = new MutationObserver(function (mutations) {
+      mutations.forEach(function (m) {
+        Array.prototype.forEach.call(m.addedNodes || [], function (node) {
+          if (node.nodeType === 1) enhanceVocabTerms(node);
+        });
+      });
+    });
+    vocabObserver.observe(document.body || document.documentElement, { childList: true, subtree: true });
+  }
+})();
+</script>
+</body>
+</html>
